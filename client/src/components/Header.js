@@ -1,11 +1,12 @@
 import React from "react";
 import { connect } from "react-redux";
+import { Link } from "react-router-dom";
 
 class Header extends React.Component {
   renderContent() {
     switch (this.props.auth) {
       case null: // Still waiting for request to resolve
-        return <div />;
+        return;
       case false: // logged out
         return (
           <li>
@@ -26,9 +27,12 @@ class Header extends React.Component {
     return (
       <nav>
         <div className="nav-wrapper">
-          <a href="#" className="left brand-logo">
+          <Link
+            to={this.props.auth ? "/surveys" : "/"}
+            className="left brand-logo"
+          >
             Emaily
-          </a>
+          </Link>
           <ul className="right">{this.renderContent()}</ul>
         </div>
       </nav>
