@@ -21,7 +21,6 @@ module.exports = app => {
     res.redirect("/");
   });
 
-  // for testing the middleware
   app.get("/api/current_user", (req, res) => {
     res.send(req.user);
   });
