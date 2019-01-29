@@ -7,6 +7,7 @@ const keys = require("./config/keys");
 
 // Order matters below -- need to define model files first
 require("./models/User");
+require("./models/Survey");
 require("./services/passport");
 
 // Connect to db
@@ -30,6 +31,7 @@ app.use(passport.session());
 // Setup routes
 require("./routes/authRoutes")(app);
 require("./routes/billingRoutes")(app);
+require("./routes/surveyRoutes")(app);
 
 if (process.env.NODE_ENV === "production") {
   // Express will serve prod assets
