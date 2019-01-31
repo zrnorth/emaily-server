@@ -1,3 +1,6 @@
+const _ = require("lodash");
+const { Path } = require("path-parser");
+const { URL } = require("url");
 const mongoose = require("mongoose");
 const requireCredits = require("../middlewares/requireCredits");
 const requireLogin = require("../middlewares/requireLogin");
@@ -36,5 +39,25 @@ module.exports = app => {
     } catch (err) {
       res.status(422).send(err);
     }
+  });
+
+  app.post("/api/surveys/webhooks", (req, res) => {
+    const p = new Path("/api/surveys/:surveyId/:choice");
+    const events = _.chain(req.body)
+      // extract path from url and get the survey id + choice
+      .map(({ email, url }) => {
+        const match = p.test(new URL(url).pathname);
+        if (match) {
+          return {
+            email,
+            ...match
+          };
+        }
+      })
+      // Remove any records with duplicate email + survey id. User can't vote >once
+      .compact()
+      .uniqBy("email", "surveyId")
+      .value();
+    console.log(events);
   });
 };
