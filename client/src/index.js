@@ -8,6 +8,15 @@ import reduxThunk from "redux-thunk";
 import App from "./components/App";
 import reducers from "./reducers";
 
+// Debugging in chrome: uncomment this, comment out the below store declaration
+// import { compose } from "redux";
+// const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+// const store = createStore(
+//   reducers,
+//   {},
+//   composeEnhancers(applyMiddleware(reduxThunk))
+// );
+// end debugging
 const store = createStore(reducers, {}, applyMiddleware(reduxThunk));
 
 ReactDOM.render(
