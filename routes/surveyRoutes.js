@@ -10,7 +10,7 @@ const surveyTemplate = require("../services/emailTemplates/surveyTemplates");
 const Survey = mongoose.model("surveys");
 
 module.exports = app => {
-  app.get("/api/surveys/thanks", (req, res) => {
+  app.get("/api/surveys/:surveyId/:choice", (req, res) => {
     res.send("Thanks for voting!");
   });
 
@@ -43,7 +43,7 @@ module.exports = app => {
 
   app.post("/api/surveys/webhooks", (req, res) => {
     const p = new Path("/api/surveys/:surveyId/:choice");
-    const events = _.chain(req.body)
+    _.chain(req.body)
       // extract path from url and get the survey id + choice
       .map(({ email, url }) => {
         const match = p.test(new URL(url).pathname);
@@ -57,7 +57,23 @@ module.exports = app => {
       // Remove any records with duplicate email + survey id. User can't vote >once
       .compact()
       .uniqBy("email", "surveyId")
+      .each(({ surveyId, email, choice }) => {
+        Survey.updateOne(
+          {
+            _id: surveyId,
+            recipients: {
+              $elemMatch: { email: email, responded: false }
+            }
+          },
+          {
+            $inc: { [choice]: 1 },
+            $set: { "recipients.$.responded": true },
+            $currentDate: { lastResponded: true }
+          }
+        ).exec();
+      })
       .value();
-    console.log(events);
+
+    res.send({});
   });
 };
