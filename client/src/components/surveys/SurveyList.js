@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { fetchSurveys } from "../../actions";
+import { fetchSurveys, deleteSurvey } from "../../actions";
 
 import SurveyGraph from "./SurveyGraph";
 
@@ -32,6 +32,12 @@ class SurveyList extends React.Component {
             <div className="card-action">
               <a href="#">Yes: {survey.yes}</a>
               <a href="#">No: {survey.no}</a>
+              <button
+                className="btn right"
+                onClick={() => this.props.deleteSurvey(survey._id)}
+              >
+                Delete
+              </button>
             </div>
           </div>
         </div>
@@ -50,5 +56,5 @@ function mapStateToProps({ surveys }) {
 
 export default connect(
   mapStateToProps,
-  { fetchSurveys }
+  { fetchSurveys, deleteSurvey }
 )(SurveyList);
